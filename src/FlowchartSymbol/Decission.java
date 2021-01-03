@@ -2,8 +2,8 @@ package FlowchartSymbol;
 
 import java.awt.*;
 
-public class Decision extends Symbol{
-    public Decision(int linea, String instruccion, String parametros, int saltoverdad, int saltofalso) {
+public class Decission extends Symbol{
+    public Decission(int linea, String instruccion, String parametros, int saltoverdad, int saltofalso) {
         super(linea, instruccion, parametros, saltoverdad, saltofalso);
     }
     @Override

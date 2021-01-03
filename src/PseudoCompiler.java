@@ -25,12 +25,13 @@ public class PseudoCompiler {
         ArrayList<PseudoLexer.Token> tokens = pLexer.getTokens(input);
 
         pParser = new PseudoParser();
-
-
         System.out.println("\nSintaxis correcta: " + pParser.parse(tokens));
-        System.out.println(pParser.tuplos.size());
-        for (int i = 0; i < pParser.tuplos.size(); i++){
-            pParser.tuplos.get(i).PrintTupla();
+
+
+        System.out.println(pParser.symbols.size());
+        for (int i = 0; i < pParser.symbols.size(); i++){
+            pParser.symbols.get(i).PrintInstruction();
         }
+
     }
 }

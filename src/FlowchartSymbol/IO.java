@@ -8,7 +8,9 @@ public class IO extends Symbol{
     }
     @Override
     void DrawSymbol(Graphics g) {
-        g.drawRect(x, y, width, height);
-        //g.drawString(parametros, x + 20, y + (height / 3));
+        int[] xs = {x + 20, x + width + 20 , x + width, x};
+        int[] ys = {y, y, y + height, y + height};
+        g.drawPolygon(xs, ys, 4);
+        g.drawString(parametros, x + 20, y + (height / 3));
     }
 }

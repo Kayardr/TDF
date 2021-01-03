@@ -1,13 +1,18 @@
+import FlowchartSymbol.Decission;
+import FlowchartSymbol.IO;
+import FlowchartSymbol.Process;
+import FlowchartSymbol.Symbol;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PseudoParser {
     ArrayList<PseudoLexer.Token> tokens;
     int  tokenIndex = 0;
-    ArrayList<Tuplo> tuplos;
+    ArrayList<Symbol> symbols;
     boolean comparacion;
     PseudoParser(){
-        tuplos = new ArrayList<>();
+        symbols = new ArrayList<>();
     }
     public boolean parse(ArrayList<PseudoLexer.Token> tokens){
         this.tokens = tokens;
@@ -31,11 +36,11 @@ public class PseudoParser {
             if(enunciados())
                 if(token("FINPROGRAMA")){
                     if(tokenIndex == tokens.size()){
-                        tuplos.remove(tuplos.size()-1);
-                        tuplos.get(tuplos.size()-1).instruccion = "fin";
-                        tuplos.get(tuplos.size()-1).parametros = new String[] {""};
-                        tuplos.get(tuplos.size()-1).saltoverdad = -1;
-                        tuplos.get(tuplos.size()-1).saltofalso = -1;
+                        symbols.remove(symbols.size()-1);
+                        symbols.get(symbols.size()-1).instruccion = "fin";
+                        symbols.get(symbols.size()-1).parametros = " ";
+                        symbols.get(symbols.size()-1).saltoverdad = -1;
+                        symbols.get(symbols.size()-1).saltofalso = -1;
                         return true;
                     }
 
@@ -94,19 +99,19 @@ public class PseudoParser {
 
     private boolean enunciadoAsignacion(){
         //System.out.println("<Asignacion> --> <Variable> = <Expesion>");
-        int beginIndex = tokenIndex;
+        int beginIndex = tokenIndex - 1;
         if(token("VARIABLE"))
             if(token("IGUAL"))
                 if(expresion()){
                     String parameters[] = new String[tokenIndex-beginIndex-1];
                     parameters[0] = tokens.get(beginIndex).data;
-                    int i = beginIndex + 2;
+                    int i = beginIndex + 1;
                     while (i < tokenIndex){
                         parameters[i-beginIndex-1]=tokens.get(i).data;
                         i++;
                     }
-                    Tuplo t = new Tuplo(tuplos.size(), "asignacion", parameters, tuplos.size()+1, tuplos.size()+1);
-                    tuplos.add(t);
+                    Symbol s = new Process(symbols.size(), "asignacion", Arrays.toString(parameters).replace(',',' '), symbols.size()+1, symbols.size()+1);
+                    symbols.add(s);
                     return true;
                 }
         return false;
@@ -147,11 +152,13 @@ public class PseudoParser {
             if(token("CADENA"))
                 if(token("COMA"))
                     if(token("VARIABLE")){
-                        String parameters[] = new String[2];
-                        parameters[0] = tokens.get(tokenIndex-3).data;
-                        parameters[1] = tokens.get(tokenIndex-1).data;
-                        Tuplo t = new Tuplo(tuplos.size(), "leer", parameters, tuplos.size()+1, tuplos.size()+1);
-                        tuplos.add(t);
+                        String parameters = tokens.get(tokenIndex - 3).data;
+                        //String parameters[] = new String[2];
+
+                        //parameters[0] = tokens.get(tokenIndex-3).data;
+                        //parameters[1] = tokens.get(tokenIndex-1).data;
+                        Symbol t = new IO(symbols.size(), "leer", parameters, symbols.size()+1, symbols.size()+1);
+                        symbols.add(t);
                         return true;
                     }
 
@@ -166,21 +173,26 @@ public class PseudoParser {
             if (token("CADENA"))
                 if(token("COMA"))
                     if(token("VARIABLE")){
-                        String parameters[] = new String[2];
-                        parameters[0] = tokens.get(tokenIndex-3).data;
-                        parameters[1] = tokens.get(tokenIndex-1).data;
+                        String parameters = tokens.get(tokenIndex - 3).data;
+                        //String parameters[] = new String[2];
+                        //parameters[0] = tokens.get(tokenIndex-3).data;
+                        //parameters[1] = tokens.get(tokenIndex-1).data;
 
-                        Tuplo t = new Tuplo(tuplos.size(), "escribir", parameters, tuplos.size()+1, tuplos.size()+1);
-                        tuplos.add(t);
+                        Symbol t = new IO(symbols.size(), "escribir", parameters, symbols.size()+1, symbols.size()+1);
+                        symbols.add(t);
                         return true;
                     }
         tokenIndex = tokenIndexAux;
         if(token("ESCRIBIR"))
             if(token("CADENA")){
+                String parameters = tokens.get(tokenIndex - 1).data;
+                /*
                 String parameters[] = new String[1];
                 parameters[0] = tokens.get(tokenIndex-1).data;
-                Tuplo t = new Tuplo(tuplos.size(), "escribir", parameters, tuplos.size()+1, tuplos.size()+1);
-                tuplos.add(t);
+                */
+
+                Symbol t = new IO(symbols.size(), "escribir", parameters, symbols.size()+1, symbols.size()+1);
+                symbols.add(t);
                 return true;
             }
 
@@ -190,7 +202,7 @@ public class PseudoParser {
     private boolean enunciadoSi(){
         //System.out.println("<SI> --> si <Comparacion> entonces <Enunciados> fin-si");
         if(token("SI")){
-            int tuploAux = tuplos.size();
+            int tuploAux = symbols.size();
             if(comparacion()){
                 comparacion = true;
 
@@ -199,7 +211,7 @@ public class PseudoParser {
                     if(enunciados()){
                         int tokenIndexAux = tokenIndex;
                         if(token("FINSI")){
-                            tuplos.get(tuploAux).saltofalso = tuplos.size() + (tokenIndex - tokenIndexAux) - 1;
+                            symbols.get(tuploAux).saltofalso = symbols.size() + (tokenIndex - tokenIndexAux) - 1;
                             return true;
                         }
                     }
@@ -221,8 +233,8 @@ public class PseudoParser {
                             parameters[0] = tokens.get(tokenIndex-4).data;
                             parameters[1] = tokens.get(tokenIndex-3).data;
                             parameters[2] = tokens.get(tokenIndex-2).data;
-                            Tuplo t = new Tuplo(tuplos.size(), "comparacion", parameters, tuplos.size()+1, tuplos.size()+1);
-                            tuplos.add(t);
+                            Symbol t = new Decission(symbols.size(), "comparacion", Arrays.toString(parameters).replace(',',' '), symbols.size()+1, symbols.size()+1);
+                            symbols.add(t);
                             return true;
                         }
 
@@ -233,15 +245,15 @@ public class PseudoParser {
         //System.out.println("<Mientras> --> mientras <Comparacion> <Enunciados> fin-mientras");
 
         if(token("MIENTRAS")){
-            int tuploAux = tuplos.size();
+            int tuploAux = symbols.size();
             if(comparacion()){
                 comparacion = true;
                 if (enunciados()){
                     int tokenIndexAux = tokenIndex;
                     if(token("FINMIENTRAS")) {
-                        tuplos.get(tuploAux).saltofalso = tuplos.size() + (tokenIndex - tokenIndexAux) - 1;
-                        tuplos.get(tuplos.size() - 1).saltoverdad = tuploAux;
-                        tuplos.get(tuplos.size() - 1).saltofalso = tuploAux;
+                        symbols.get(tuploAux).saltofalso = symbols.size() + (tokenIndex - tokenIndexAux) - 1;
+                        symbols.get(symbols.size() - 1).saltoverdad = tuploAux;
+                        symbols.get(symbols.size() - 1).saltofalso = tuploAux;
                         return true;
                     }
                 }
