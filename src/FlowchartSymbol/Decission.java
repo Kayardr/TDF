@@ -7,10 +7,16 @@ public class Decission extends Symbol{
         super(linea, instruccion, parametros, saltoverdad, saltofalso);
     }
     @Override
-    void DrawSymbol(Graphics g) {
+    public void DrawSymbol(Graphics g) {
         int[] xs = {x + (width / 2), x + width , x + (width / 2), x};
         int[] ys = {y, y + (height / 2), y + height, y + (height / 2)};
+        int steps = saltofalso - linea;
         g.drawPolygon(xs, ys, 4);
-        g.drawString(parametros, x + (width / 3), y + (height / 2));
+        g.drawString(parametros, x + (width / 4), y + (height / 2));
+
+        Arrow.draw(x + (width /2), y + height, x + (width /2), y + height + 50, 0, g);
+        g.drawLine(x + width, y + (height / 2), x + width + 100, y + (height/2));
+        g.drawLine(x + width + 100, y + (height/2), x + width + 100, y + (steps * 100) + 15);
+        Arrow.draw(x + width + 100, y + (steps * 100) + 15, x + width, y + (steps * 100) + 15, 1, g);
     }
 }

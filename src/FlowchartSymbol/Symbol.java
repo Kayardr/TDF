@@ -19,9 +19,12 @@ public abstract class Symbol {
         this.saltofalso = saltofalso;
 
         y = (linea * 100) + 50;     //Calcula la coordenada y para dibujar el simbolo
+        x = 500;
+        width = 200;
+        height = 50;
     }
 
-    abstract void DrawSymbol(Graphics g);   //Metodo abstracto que permite dibujar diferentes simbolos
+    public abstract void DrawSymbol(Graphics g);   //Metodo abstracto que permite dibujar diferentes simbolos
 
     public void PrintInstruction(){
         System.out.printf(

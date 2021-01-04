@@ -6,7 +6,6 @@ import javax.swing.*;
 public class Test {
     public static void main(String[] args){
         //ESTA PARTE SE DEBE MOVER A LA CLASE FSWINDOW
-        // new PseudoCompiler();
 
         FSWindow fsw = new FSWindow();
         fsw.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

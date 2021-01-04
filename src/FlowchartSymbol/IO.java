@@ -7,10 +7,15 @@ public class IO extends Symbol{
         super(linea, instruccion, parametros, saltoverdad, saltofalso);
     }
     @Override
-    void DrawSymbol(Graphics g) {
+    public void DrawSymbol(Graphics g) {
         int[] xs = {x + 20, x + width + 20 , x + width, x};
         int[] ys = {y, y, y + height, y + height};
         g.drawPolygon(xs, ys, 4);
-        g.drawString(parametros, x + 20, y + (height / 3));
+        g.drawString(parametros, x + (width / 4), y + (height / 3));
+        if(saltoverdad < linea){
+            //Dibujar flecha hacia arriba
+        }else{
+            Arrow.draw(x + (width /2), y + height, x + (width /2), y + height + 50, 0, g);
+        }
     }
 }

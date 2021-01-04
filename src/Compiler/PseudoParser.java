@@ -1,7 +1,7 @@
-import FlowchartSymbol.Decission;
-import FlowchartSymbol.IO;
+package Compiler;
+
+import FlowchartSymbol.*;
 import FlowchartSymbol.Process;
-import FlowchartSymbol.Symbol;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,10 +37,8 @@ public class PseudoParser {
                 if(token("FINPROGRAMA")){
                     if(tokenIndex == tokens.size()){
                         symbols.remove(symbols.size()-1);
-                        symbols.get(symbols.size()-1).instruccion = "fin";
-                        symbols.get(symbols.size()-1).parametros = " ";
-                        symbols.get(symbols.size()-1).saltoverdad = -1;
-                        symbols.get(symbols.size()-1).saltofalso = -1;
+                        symbols.remove(symbols.size()-1);
+                        symbols.add(new Start(symbols.size(), "fin", "", -1, -1));
                         return true;
                     }
 
