@@ -41,6 +41,7 @@ public class PseudoParser {
     private boolean programa(){
         //System.out.println("<Programa> --> inicio-programa <Enunciados> fin-programa");
         if(token("INICIOPROGRAMA"))
+            symbols.add(new Start(symbols.size(), "inicio", "", 1, 1));
             if(enunciados())
                 if(token("FINPROGRAMA")){
                     if(tokenIndex == tokens.size()){
