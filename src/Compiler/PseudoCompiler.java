@@ -10,12 +10,12 @@ public class PseudoCompiler {
     PseudoLexer pLexer;
     PseudoParser pParser;
     ArrayList<Symbol> symbols;
-    public PseudoCompiler(){
+    public PseudoCompiler(String filename){
         pLexer = new PseudoLexer();
         String input = "";
 
         try{
-            FileReader reader = new FileReader("prom.alg");
+            FileReader reader = new FileReader(filename);
             int character;
 
             while ((character = reader.read()) != -1){

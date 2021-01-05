@@ -11,6 +11,7 @@ public abstract class Symbol {
     public int saltoverdad;            //Esto ayuda a indicar el destino de la linea de flujo en caso de que la instruccion sea verdadera
     public int saltofalso;             //Lo mismo que la anterior pero en caso de que sea falso
     public int x, y, width, height;    //Parametros dedicados a posicionar el simbolo en el panel
+    public int nesteds;
     public Symbol(int linea, String instruccion, String parametros, int saltoverdad, int saltofalso) {
         this.linea = linea;
         this.instruccion = instruccion;

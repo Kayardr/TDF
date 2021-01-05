@@ -10,11 +10,19 @@ public class PseudoParser {
     ArrayList<PseudoLexer.Token> tokens;
     int  tokenIndex = 0;
     ArrayList<Symbol> symbols;
-    boolean comparacion;
+    //boolean comparacion;
+    ArrayList<Boolean> comparacion;
+    int nested;
+    int nestedaux;
+    int nestedreturn;
+    int nestedreturnaux;
     PseudoParser(){
         symbols = new ArrayList<>();
+        comparacion = new ArrayList<>();
     }
     public boolean parse(ArrayList<PseudoLexer.Token> tokens){
+        nestedaux = 0;
+        nested = 0;
         this.tokens = tokens;
         System.out.println("\n\n ********** Reglas de produccion ********** \n\n");
         return programa();
@@ -36,8 +44,8 @@ public class PseudoParser {
             if(enunciados())
                 if(token("FINPROGRAMA")){
                     if(tokenIndex == tokens.size()){
-                        symbols.remove(symbols.size()-1);
-                        symbols.remove(symbols.size()-1);
+                        //symbols.remove(symbols.size()-1);
+                        //symbols.remove(symbols.size()-1);
                         symbols.add(new Start(symbols.size(), "fin", "", -1, -1));
                         return true;
                     }
@@ -50,16 +58,25 @@ public class PseudoParser {
     private boolean enunciados(){
         //System.out.println("<Enunciados> --> <Enunciados> <Enunciados> | <Enunciados>");
         int tokenIndexAux = tokenIndex;
+
+        if(tokenIndex == tokens.size()-1)
+            return true;
         if(enunciado()){
             if (enunciados()){
                 return true;
             }
         }
-        if(comparacion == true){
+
+        /*if(comparacion == true){
             comparacion = false;
             return true;
+        }*/
+        if(comparacion.size() > 0 && comparacion.get(comparacion.size()-1)){
+            comparacion.remove(comparacion.size()-1);
+            return  true;
         }
-        tokenIndex = tokenIndexAux;
+
+        //tokenIndex = tokenIndexAux;
         if(enunciado())
             return true;
         return false;
@@ -67,7 +84,6 @@ public class PseudoParser {
 
     private boolean enunciado(){
         //System.out.println("<Enunciado> --> <Asignación> | <Leer> | <Escribir> | <Si> | <Mientras>");
-
         if (enunciadoAsignacion()){
             System.out.println("<Enunciado> --> <Asignacion>");
             return true;
@@ -200,16 +216,24 @@ public class PseudoParser {
     private boolean enunciadoSi(){
         //System.out.println("<SI> --> si <Comparacion> entonces <Enunciados> fin-si");
         if(token("SI")){
+            int nestedaux = this.nestedaux;
+            this.nestedaux++;
             int tuploAux = symbols.size();
             if(comparacion()){
-                comparacion = true;
-
-
+                //comparacion = true;
+                comparacion.add(true);
                 if(token("ENTONCES")){
                     if(enunciados()){
                         int tokenIndexAux = tokenIndex;
                         if(token("FINSI")){
                             symbols.get(tuploAux).saltofalso = symbols.size() + (tokenIndex - tokenIndexAux) - 1;
+                            symbols.get(tuploAux).nesteds = nested;
+                            if(nestedaux == 0){
+                                nested = 0;
+                                this.nestedaux = 0;
+                            }
+                            else
+                                nested++;
                             return true;
                         }
                     }
@@ -243,15 +267,27 @@ public class PseudoParser {
         //System.out.println("<Mientras> --> mientras <Comparacion> <Enunciados> fin-mientras");
 
         if(token("MIENTRAS")){
+            int nestedreturnaux = this.nestedreturnaux;
+            this.nestedreturnaux++;
+
             int tuploAux = symbols.size();
             if(comparacion()){
-                comparacion = true;
+                //comparacion = true;
+                comparacion.add(true);
                 if (enunciados()){
                     int tokenIndexAux = tokenIndex;
                     if(token("FINMIENTRAS")) {
                         symbols.get(tuploAux).saltofalso = symbols.size() + (tokenIndex - tokenIndexAux) - 1;
                         symbols.get(symbols.size() - 1).saltoverdad = tuploAux;
                         symbols.get(symbols.size() - 1).saltofalso = tuploAux;
+
+                        symbols.get(symbols.size() - 1).nesteds = nestedreturn;
+                        if(nestedreturnaux == 0){
+                            nestedreturn = 0;
+                            this.nestedreturnaux = 0;
+                        }
+                        else
+                            nestedreturn++;
                         return true;
                     }
                 }

@@ -13,4 +13,5 @@ inicio-programa
 	si (prom==10) entonces
 		escribir "Excelente"
 	fin-si
+
 fin-programa

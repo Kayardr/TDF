@@ -1,6 +1,7 @@
 package GUI;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,8 @@ public class FSWindow extends JFrame implements ActionListener {
     private UIPanel uip;
     private FSPanel fsp;
     private JScrollPane jsp;
+    private String filename;
+    private static final String workingDirectory = System.getProperty("user.dir");
     public FSWindow(){
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         bounds = env.getMaximumWindowBounds();
@@ -26,6 +29,12 @@ public class FSWindow extends JFrame implements ActionListener {
         uip = new UIPanel();
         uip.setSize(bounds.width, 100);
         uip.setBackground(new Color(222, 222, 222));
+
+        JButton chosebtn = new JButton("buscar archivo");
+        chosebtn.setActionCommand("chosefile");
+        chosebtn.addActionListener(this);
+        uip.add(chosebtn);
+
         JButton genfc = new JButton("Generar Diagrama de Flujo");
         genfc.setActionCommand("genfc");
         genfc.addActionListener(this);
@@ -47,16 +56,22 @@ public class FSWindow extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e){
-        if("genfc".equals(e.getActionCommand())){
-            PseudoCompiler pc = new PseudoCompiler();
+        if("genfc".equals(e.getActionCommand()) && !filename.isEmpty()){
+            PseudoCompiler pc = new PseudoCompiler(filename);
             fsp.setPreferredSize(new Dimension(bounds.width, pc.getSymbols().size() * 105));
             fsp.setSymbols(pc.getSymbols());
-            //uip.repaint();
             fsp.revalidate();
             fsp.repaint();
-
             container.validate();
-            //fsp.paintComponent(getGraphics());
+        }else if("chosefile".equals(e.getActionCommand())){
+            JFileChooser chooser = new JFileChooser(workingDirectory);
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    ".txt and .alg text files", "txt", "alg"
+            );
+            int returval = chooser.showOpenDialog(this);
+            if(returval == JFileChooser.APPROVE_OPTION){
+                filename = chooser.getSelectedFile().getName();
+            }
         }
     }
 }
